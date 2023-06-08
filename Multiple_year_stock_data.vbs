@@ -1,4 +1,4 @@
-Sub UpdateStocks():
+Sub SummarizeStocks():
 
     ' Cycle through each worksheet and call subroutines to create two tables for each year
     
@@ -44,14 +44,14 @@ Sub CreateTickerTable(ws As Worksheet):
     ' Loop through every stock entry
     For i = 2 To LastRow
 
-        ' Add current stock volume to total
+        ' Add current stock volume to total for current ticker/company
         TotalVolume = TotalVolume + ws.Cells(i, 7).Value
         
-        ' If the next ticker doesn't match, store data the current ticker in the table
+        ' If the next ticker doesn't match, store data for current ticker in the table
         If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
         
             YearClose = ws.Cells(i, 6).Value
-            ws.Cells(TableRow, 9).Value = ws.Cells(i, 1).Value                  ' Store ticker
+            ws.Cells(TableRow, 9).Value = ws.Cells(i, 1).Value                  ' Store ticker in table
             ws.Cells(TableRow, 10).Value = YearClose - YearOpen                 ' Store change in stock value for the year
             ws.Cells(TableRow, 11).Value = ws.Cells(TableRow, 10) / YearOpen    ' Calculate and store % of change from the opening value
             ws.Cells(TableRow, 12).Value = TotalVolume                          ' Store the total stock volume for the year
