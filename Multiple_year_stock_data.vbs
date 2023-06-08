@@ -1,6 +1,6 @@
 Sub UpdateStocks():
 
-    ' Cycle through each worksheet and call subroutines to create the two tables for each year
+    ' Cycle through each worksheet and call subroutines to create two tables for each year
     
     Dim ws As Worksheet
     
@@ -22,7 +22,7 @@ Sub CreateTickerTable(ws As Worksheet):
     Dim YearOpen, YearClose, TotalVolume As Double
     
     ' ===========================================
-    ' Part 1: Create the table
+    ' Create the table
     ' ===========================================
         
     ' Create table header
@@ -35,10 +35,10 @@ Sub CreateTickerTable(ws As Worksheet):
     YearOpen = ws.Range("C2").Value
     TotalVolume = 0
        
-    ' Get last row with stock date for the loop
+    ' Get last row with stock entry for the loop
     LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
     
-    ' Initative TableRow for first ticker/stock entry. This will increase row of table for next ticker/company
+    ' Initatize variable to increase row for next ticker/company
     TableRow = 2
     
     ' Loop through every stock entry
@@ -47,18 +47,18 @@ Sub CreateTickerTable(ws As Worksheet):
         ' Add current stock volume to total
         TotalVolume = TotalVolume + ws.Cells(i, 7).Value
         
-        ' If the next ticker doesn't match, summarize data for the current ticker
+        ' If the next ticker doesn't match, store data the current ticker in the table
         If ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value Then
         
             YearClose = ws.Cells(i, 6).Value
             ws.Cells(TableRow, 9).Value = ws.Cells(i, 1).Value                  ' Store ticker
             ws.Cells(TableRow, 10).Value = YearClose - YearOpen                 ' Store change in stock value for the year
-            ws.Cells(TableRow, 11).Value = ws.Cells(TableRow, 10) / YearOpen    ' Calculate % of change from the opening value
+            ws.Cells(TableRow, 11).Value = ws.Cells(TableRow, 10) / YearOpen    ' Calculate and store % of change from the opening value
             ws.Cells(TableRow, 12).Value = TotalVolume                          ' Store the total stock volume for the year
             
             YearOpen = ws.Cells(i + 1, 3).Value                                 ' Set the opening value for the year for the next ticker
             TotalVolume = 0                                                     ' Reset total volume for next ticker    
-            TableRow = TableRow + 1                                             ' Increase row for summary table for next ticker
+            TableRow = TableRow + 1                                             ' Increase row in table for next ticker
              
         End If
     
@@ -74,14 +74,14 @@ Sub CreateTickerTable(ws As Worksheet):
     ws.Range("L2:L" & TableRow).NumberFormat = "0"          ' Format total stock volume to prevent scientic notation
     ws.Range("I1:L1").Columns.AutoFit                       ' Autofit width for all columns in the table
     
-    ' Remove any existing conditional formating
+    ' Remove any existing conditional formating rules
     ws.Range("J2:J" & TableRow).FormatConditions.Delete
     
-    ' Conditional formating to format cell color to red for negative yearly changes
+    ' Create conditional formating rule to set cell color to red for negative yearly changes
     ws.Range("J2:J" & TableRow).FormatConditions.Add Type:=xlCellValue, Operator:=xlLess, Formula1:="=0"
     ws.Range("J2:J" & TableRow).FormatConditions(1).Interior.Color = vbRed
     
-    ' Conditional formating to format cell color to green for positive yearly changes
+    ' Create conditional formating rule to set cell color to green for positive yearly changes
     ws.Range("J2:J" & TableRow).FormatConditions.Add Type:=xlCellValue, Operator:=xlGreaterEqual, Formula1:="=0"
     ws.Range("J2:J" & TableRow).FormatConditions(2).Interior.Color = vbGreen
 
@@ -89,21 +89,23 @@ End Sub
 
 Sub CreateGreatestTable(ws As Worksheet):
 
-    ' Create and format a table with the greatest % increase for year,
-    ' greatest % decrease and greatest total volume
+    ' Create and format a table with the following info
+    '   1. ticker with greatest % increase for the year
+    '   2. ticker with greatest % decrease for the year
+    '   3. ticker with greatest total stock volume for the year
 
     Dim i, LastRow As Integer
     Dim TickerMaxInc, TickerMaxDec, TickerMaxVol As String
     Dim MaxInc, MaxDec, MaxVol As Double
     
-    ' Set up summary table header and first column
+    ' Set up table with column and row headers
     ws.Range("P1").Value = "Ticker"
     ws.Range("Q1").Value = "Value"
     ws.Range("O2").Value = "Greatest % Increase"
     ws.Range("O3").Value = "Greatest % Decrease"
     ws.Range("O4").Value = "Greatest Total Volume"
     
-    ' Get the last row win the ticker table
+    ' Get the last row in the ticker table
     LastRow = ws.Cells(Rows.Count, 9).End(xlUp).Row
     
     ' Initialize variables to store the greatest values
@@ -114,18 +116,18 @@ Sub CreateGreatestTable(ws As Worksheet):
     ' Loop through every stock entry in the table
     For i = 2 To LastRow
         
-        ' If the % change is greater than the current max increase, set the new max increase and corresponding ticker 
+        ' If the % change is greater than the current max increase, set the new max and ticker 
         If ws.Cells(i, 11).Value > MaxInc Then
             MaxInc = ws.Cells(i, 11).Value
             IickerMaxInc = ws.Range("I" & i).Value
         
-        ' If the % change is less than the current max decrease, set the new max decrease and corresponding ticker 
+        ' If the % change is less than the current max decrease, set the new max and ticker 
         ElseIf ws.Cells(i, 11).Value < MaxDec Then      '
             IickerMaxDec = ws.Cells(i, 9).Value
             MaxDec = ws.Cells(i, 11).Value
         End If
         
-        ' If the total stock volume is greater the current max volumen, set the new max volume and corresponding ticker
+        ' If the total stock volume is greater the current max volumen, set the new max and ticker
         If ws.Cells(i, 12).Value > MaxVol Then
             IickerMaxVol = ws.Cells(i, 9).Value
             MaxVol = ws.Cells(i, 12).Value
@@ -133,7 +135,7 @@ Sub CreateGreatestTable(ws As Worksheet):
     
     Next i
         
-    ' Store the data in table
+    ' Store the data in the table
     ws.Range("P2").Value = IickerMaxInc
     ws.Range("Q2").Value = MaxInc
     ws.Range("P3").Value = IickerMaxDec
