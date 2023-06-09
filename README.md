@@ -2,7 +2,7 @@
 
 The following files are located in the root folder of this repo
 1. Multiple_year_stock_data.vbs - VBA script for the challenge
-2. Results_20XX_screenshoteet.png - 3 separate files with screenshots of each sheet for years 2018-2020 after running the script
+2. Results_20XX_screenshot.png - 3 separate files with screenshots of each sheet for years 2018-2020 after running the script
 3. README.md - This file
 
 Additional Notes
